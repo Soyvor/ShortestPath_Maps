@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Shortest Distance between Two Landmarks</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Arial, sans-serif;
+		}
+
+		#map {
+			height: 500px;
+			width: 100%;
+			margin-top: 20px;
+			border: 1px solid #ddd;
+		}
+
+		form {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			justify-content: center;
+			margin: 20px auto;
+			max-width: 600px;
+		}
+
+		label {
+			flex: 1;
+			margin: 5px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		input[type=text] {
+			flex: 2;
+			margin: 5px;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			font-size: 16px;
+		}
+
+		input[type=submit] {
+			flex: 1;
+			margin: 5px;
+			padding: 10px;
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+		}
+
+		input[type=submit]:hover {
+			background-color: #0069d9;
+		}
+
+		.result {
+			margin: 20px auto;
+			max-width: 600px;
+			text-align: center;
+		}
+
+		.result h2 {
+			font-weight: bold;
+			font-size: 24px;
+			margin-bottom: 10px;
+		}
+
+		.result p {
+			font-size: 18px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<form id="search-form">
+		<label for="origin">Origin:</label>
+		<input type="text" id="origin" placeholder="Enter the origin landmark">
+		<label for="destination">Destination:</label>
+		<input type="text" id="destination" placeholder="Enter the destination landmark">
+		<input type="submit" value="Search">
+	</form>
+	<div id="map"></div>
+	<div class="result">
+		<h2>Shortest Distance</h2>
+		<p id="distance"></p>
+	</div>
+	<script>
+		// Initialize the Google Maps API with your API key
+		function initMap() {
+			let map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: 37.7749, lng: -122.4194}, // San Francisco coordinates
+				zoom: 12
+			});
+			let directionsService = new google.maps.DirectionsService();
+			let directionsRenderer = new google.maps.DirectionsRenderer();
+			directionsRenderer.setMap(map);
+
+			// Attach an event listener to the search form
+			document.querySelector('#search-form').addEventListener('submit', function(event) {
+				event.preventDefault();
+
+				// Get the origin and destination values from the form
+				let origin = document.querySelector('#origin').value;
+				let destination = document.querySelector('#destination').value;
+
+				// Create
+			// a DirectionsRequest object and set the origin, destination, and travel mode
+			let request = {
+				origin: origin,
+				destination: destination,
+				travelMode: 'DRIVING'
+			};
+
+			// Call the DirectionsService.route() method to calculate the shortest route
+			directionsService.route(request, function(result, status) {
+				if (status === 'OK') {
+					// Display the shortest route on the map
+					directionsRenderer.setDirections(result);
+
+					// Get the distance of the shortest route and display it in the result section
+					let distance = result.routes[0].legs[0].distance.text;
+					document.querySelector('#distance').textContent = distance;
+				} else {
+					// Display an error message if the search was unsuccessful
+					alert('Error: ' + status);
+				}
+			});
+		});
+	}
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
